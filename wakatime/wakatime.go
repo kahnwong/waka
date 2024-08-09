@@ -70,6 +70,8 @@ func render(period string, total string, stats []parsedStats) {
 	switch period {
 	case "last_7_days":
 		period = "Last Week"
+	case "last_30_days":
+		period = "Last Month"
 	}
 	// --------------------------- //
 
