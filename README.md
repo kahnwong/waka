@@ -30,8 +30,12 @@ Use "wakatime-cli [command] --help" for more information about a command.
 
 ## Sample output
 
-![sample-output](docs/sample-output.png)
+![sample-output](images/sample-output.png)
 
 ## Refs
 - <https://wakatime.com/developers#summaries>
 - <https://wakatime.com/developers#stats>
+
+## Benchmark
+It's faster than the original implementation in node. Because golang.
+![benchmark](images/benchmark.png)
