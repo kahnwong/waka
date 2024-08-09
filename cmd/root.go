@@ -38,7 +38,7 @@ func init() {
 	// read config
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath("$HOME/.config/wakatime-cli")
+	viper.AddConfigPath("$HOME/.config/waka")
 
 	err := viper.ReadInConfig()
 	if err != nil {
