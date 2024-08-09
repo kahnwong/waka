@@ -66,6 +66,13 @@ func render(period string, total string, stats []parsedStats) {
 
 	//render output
 	//// print total
+	// -- prettify period label -- //
+	switch period {
+	case "last_7_days":
+		period = "Last Week"
+	}
+	// --------------------------- //
+
 	color.Green(fmt.Sprintf("⏳  Total for %s", period))
 	color.HiCyan(total)
 	fmt.Println("")
