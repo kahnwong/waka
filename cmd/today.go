@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -17,26 +18,28 @@ var todayCmd = &cobra.Command{
 		stats := extractData(response)
 
 		// render output
-		for _, i := range stats {
-			fmt.Println(i)
+		for _, stat := range stats {
+			// print title
+			fmt.Println(stat.Title)
+
+			for _, i := range stat.Stats {
+				// set slug padding
+				var maxStringLength int
+				slug := i.Slug
+				if len(slug) < maxStringLength {
+					slug += strings.Repeat(" ", maxStringLength-len(slug))
+				}
+
+				// draw bars
+				barArea := 20
+				barLength := int(i.Percent) / barArea
+				barPadding := barArea - barLength
+				bar := fmt.Sprintf("%s%s", strings.Repeat("▇", barLength), strings.Repeat("░", barPadding))
+				fmt.Printf("%s : %s %v\n", slug, bar, i.Percent)
+			}
+
+			fmt.Println("")
 		}
-
-		//
-		//// print output
-		//fmt.Println("🚀  Projects")
-		//for _, i := range category {
-		//	slug := i.Slug
-		//	if len(slug) < maxStringLength {
-		//		slug += strings.Repeat(" ", maxStringLength-len(slug))
-		//	}
-		//
-		//	barArea := 20
-		//	barLength := int(i.Percent) / barArea
-		//	barPadding := barArea - barLength
-		//	bar := fmt.Sprintf("%s%s", strings.Repeat("▇", barLength), strings.Repeat("░", barPadding))
-		//	fmt.Printf("%s : %s %v\n", slug, bar, i.Percent)
-		//}
-
 	},
 }
 
