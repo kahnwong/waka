@@ -77,15 +77,9 @@ type CategoryStats struct {
 	Percent float64
 }
 
-type StatsInfo struct {
+type Stats struct {
 	Title string
 	Stats []CategoryStats
-}
-type Stats struct {
-	Projects  StatsInfo
-	Languages StatsInfo
-	Editors   StatsInfo
-	OS        StatsInfo
 }
 
 func createAuthorizationHeader() string {
@@ -109,7 +103,7 @@ func getStats(period string) WakatimeStats {
 	return response
 }
 
-func appendToKey(category string, keyStats WakatimeKeyStats) StatsInfo {
+func appendToKey(category string, keyStats WakatimeKeyStats) Stats {
 	var categoryStats []CategoryStats
 
 	for _, i := range keyStats {
@@ -119,19 +113,19 @@ func appendToKey(category string, keyStats WakatimeKeyStats) StatsInfo {
 		})
 	}
 
-	return StatsInfo{
+	return Stats{
 		Title: category,
 		Stats: categoryStats,
 	}
 }
-func extractData(r WakatimeStats) Stats {
-	var stats Stats
+func extractData(r WakatimeStats) []Stats {
+	var stats []Stats
 
 	for _, i := range r.Data {
-		stats.Projects = appendToKey("Projects", i.Projects)
-		stats.Languages = appendToKey("Languages", i.Languages)
-		stats.Editors = appendToKey("Editors", i.Editors)
-		stats.OS = appendToKey("OS", i.OperatingSystems)
+		stats = append(stats, appendToKey("Projects", i.Projects))
+		stats = append(stats, appendToKey("Languages", i.Languages))
+		stats = append(stats, appendToKey("Editors", i.Editors))
+		stats = append(stats, appendToKey("OS", i.OperatingSystems))
 	}
 
 	return stats

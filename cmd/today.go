@@ -16,15 +16,11 @@ var todayCmd = &cobra.Command{
 		response := getStats("today")
 		stats := extractData(response)
 
-		fmt.Println(stats)
+		// render output
+		for _, i := range stats {
+			fmt.Println(i)
+		}
 
-		//// prep for output formatting
-		//var maxStringLength int
-		//for _, i := range category {
-		//	if maxStringLength < len(i.Slug) {
-		//		maxStringLength = len(i.Slug)
-		//	}
-		//}
 		//
 		//// print output
 		//fmt.Println("🚀  Projects")
