@@ -1,4 +1,4 @@
-module github.com/kahnwong/wakatime-cli
+module github.com/kahnwong/waka
 
 go 1.22.5
 
