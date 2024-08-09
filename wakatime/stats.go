@@ -12,7 +12,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-type StatsResponse struct {
+type statsResponse struct {
 	Data struct {
 		Start              time.Time     `json:"start"`
 		End                time.Time     `json:"end"`
@@ -27,8 +27,8 @@ type StatsResponse struct {
 	} `json:"data"`
 }
 
-func GetStats(period string) StatsResponse {
-	var response StatsResponse
+func getStats(period string) statsResponse {
+	var response statsResponse
 	err := requests.
 		URL(apiEndpoint).
 		Method(http.MethodGet).
@@ -41,4 +41,25 @@ func GetStats(period string) StatsResponse {
 	}
 
 	return response
+}
+
+func extractStatsData(r statsResponse) (string, []parsedStats) {
+	var total string
+	var stats []parsedStats
+
+	total = r.Data.HumanReadableTotal
+
+	stats = append(stats, appendToKey("💻  OS", r.Data.OperatingSystems))
+	stats = append(stats, appendToKey("✍️  Editors", r.Data.Editors))
+	stats = append(stats, appendToKey("🗣️  Languages", r.Data.Languages))
+	stats = append(stats, appendToKey("🚀  Projects", r.Data.Projects))
+
+	return total, stats
+}
+
+func RenderStats(period string) {
+	response := getStats(period)
+	total, stats := extractStatsData(response)
+
+	render(period, total, stats)
 }
