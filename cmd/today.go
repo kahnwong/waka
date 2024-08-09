@@ -42,10 +42,10 @@ var todayCmd = &cobra.Command{
 				}
 
 				// draw bars
-				barLength := (int(i.Percent) / 10) * 2
-				barPadding := (20 - barLength)
+				barLength := int(i.Percent) / 5 // divided by 5 to reduce rendered bar characters
+				barPadding := 20 - barLength    // deduct from 20 as it would be full bar length based on x/5 from barLength
 				bar := fmt.Sprintf("%s%s", strings.Repeat("▇", barLength), strings.Repeat("░", barPadding))
-				fmt.Printf("%s : %s %v\n", slug, bar, i.Percent)
+				fmt.Printf("%s : %s %v%%\n", slug, bar, i.Percent)
 			}
 
 			fmt.Println("")
