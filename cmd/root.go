@@ -44,7 +44,7 @@ func init() {
 	if err != nil {
 		// get API key from user input
 		reader := bufio.NewReader(os.Stdin)
-		fmt.Print("Enter WakaTime API Key: ")
+		fmt.Print("Enter Wakatime API Key: ")
 
 		apiKey, err := reader.ReadString('\n')
 		if err != nil {
