@@ -4,15 +4,27 @@ Copyright © 2024 Karn Wong <karn@karnwong.me>
 package cmd
 
 import (
+	"bufio"
+	"fmt"
 	"os"
+	"path/filepath"
+	"strings"
 
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"gopkg.in/yaml.v3"
 )
+
+type Config struct {
+	WakatimeApiKey string `yaml:"WAKATIME_API_KEY"`
+}
 
 var rootCmd = &cobra.Command{
 	Use:   "wakatime-cli",
 	Short: "Display wakatime stats in your terminal",
-	// Run: func(cmd *cobra.Command, args []string) { },
+	//Run: func(cmd *cobra.Command, args []string) {
+	//},
 }
 
 func Execute() {
@@ -23,13 +35,49 @@ func Execute() {
 }
 
 func init() {
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
+	// read config
+	viper.SetConfigName("config")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath("$HOME/.config/wakatime-cli")
 
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.wakatime-cli.yaml)")
+	err := viper.ReadInConfig()
+	if err != nil {
+		// get API key from user input
+		reader := bufio.NewReader(os.Stdin)
+		fmt.Print("Enter WakaTime API Key: ")
 
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
+		apiKey, err := reader.ReadString('\n')
+		if err != nil {
+			log.Fatal().Err(err).Msg("Error reading user input")
+		}
+
+		// write config
+		//// create config dir
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			log.Fatal().Err(err).Msg("Error obtaining home directory")
+		}
+		err = os.MkdirAll(filepath.Join(homeDir, ".config", "wakatime-cli"), os.ModePerm)
+		if err != nil {
+			log.Fatal().Err(err).Msg("Error creating config path")
+		}
+
+		//// write yaml
+		filename := filepath.Join(homeDir, ".config", "wakatime-cli", "config.yaml")
+		file, err := os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
+		if err != nil {
+			log.Fatal().Err(err).Msg("Error creating config file")
+		}
+		defer file.Close()
+
+		enc := yaml.NewEncoder(file)
+		err = enc.Encode(Config{WakatimeApiKey: strings.TrimSpace(apiKey)})
+
+		if err != nil {
+			log.Fatal().Err(err).Msg("Error writing config")
+		}
+	}
+
+	// rootCmd
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
