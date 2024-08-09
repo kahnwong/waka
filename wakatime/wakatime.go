@@ -1,3 +1,6 @@
+/*
+Copyright © 2024 Karn Wong <karn@karnwong.me>
+*/
 package wakatime
 
 import (
@@ -30,7 +33,7 @@ type summaryCategoryStats []struct {
 	Seconds      int         `json:"seconds"`
 	Percent      float64     `json:"percent"`
 }
-type summary struct {
+type summaryResponse struct {
 	Data []struct {
 		GrandTotal struct {
 			Hours        int     `json:"hours"`
@@ -85,12 +88,13 @@ type parsedStats struct {
 	Stats []parsedCategoryStats
 }
 
+// main
 func createAuthorizationHeader() string {
 	return fmt.Sprintf("Basic %s", base64.StdEncoding.EncodeToString([]byte(viper.GetString("WAKATIME_API_KEY"))))
 }
 
-func getStats(period string) summary {
-	var response summary
+func getSummary(period string) summaryResponse {
+	var response summaryResponse
 	err := requests.
 		URL(apiEndpoint).
 		Method(http.MethodGet).
@@ -100,7 +104,7 @@ func getStats(period string) summary {
 		ToJSON(&response).
 		Fetch(context.Background())
 	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to get stats for today")
+		log.Fatal().Err(err).Msgf("Failed to get summary for %s", period)
 	}
 
 	return response
@@ -121,7 +125,7 @@ func appendToKey(category string, keyStats summaryCategoryStats) parsedStats {
 		Stats: categoryStats,
 	}
 }
-func extractData(r summary) (string, []parsedStats) {
+func extractData(r summaryResponse) (string, []parsedStats) {
 	var total string
 	var stats []parsedStats
 
@@ -137,8 +141,8 @@ func extractData(r summary) (string, []parsedStats) {
 	return total, stats
 }
 
-func RenderStats(period string) {
-	response := getStats(period)
+func Render(period string) {
+	response := getSummary(period)
 	total, stats := extractData(response)
 
 	// get info for slug padding
