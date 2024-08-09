@@ -14,6 +14,7 @@ import (
 
 var WakatimeEndpoint = "https://wakatime.com"
 
+// api response
 type WakatimeKeyStats []struct {
 	Name         string      `json:"name"`
 	TotalSeconds float64     `json:"total_seconds"`
@@ -70,16 +71,21 @@ type WakatimeStats struct {
 	} `json:"daily_average"`
 }
 
+// for parsing
 type CategoryStats struct {
 	Slug    string
 	Percent float64
 }
 
+type StatsInfo struct {
+	Title string
+	Stats []CategoryStats
+}
 type Stats struct {
-	Projects  []CategoryStats
-	Languages []CategoryStats
-	Editors   []CategoryStats
-	OS        []CategoryStats
+	Projects  StatsInfo
+	Languages StatsInfo
+	Editors   StatsInfo
+	OS        StatsInfo
 }
 
 func createAuthorizationHeader() string {
@@ -103,7 +109,7 @@ func getStats(period string) WakatimeStats {
 	return response
 }
 
-func appendToKey(keyStats WakatimeKeyStats) []CategoryStats {
+func appendToKey(category string, keyStats WakatimeKeyStats) StatsInfo {
 	var categoryStats []CategoryStats
 
 	for _, i := range keyStats {
@@ -113,16 +119,19 @@ func appendToKey(keyStats WakatimeKeyStats) []CategoryStats {
 		})
 	}
 
-	return categoryStats
+	return StatsInfo{
+		Title: category,
+		Stats: categoryStats,
+	}
 }
 func extractData(r WakatimeStats) Stats {
 	var stats Stats
 
 	for _, i := range r.Data {
-		stats.Projects = appendToKey(i.Projects)
-		stats.Languages = appendToKey(i.Languages)
-		stats.Editors = appendToKey(i.Editors)
-		stats.OS = appendToKey(i.OperatingSystems)
+		stats.Projects = appendToKey("Projects", i.Projects)
+		stats.Languages = appendToKey("Languages", i.Languages)
+		stats.Editors = appendToKey("Editors", i.Editors)
+		stats.OS = appendToKey("OS", i.OperatingSystems)
 	}
 
 	return stats
