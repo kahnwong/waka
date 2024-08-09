@@ -72,6 +72,7 @@ type WakatimeStats struct {
 }
 
 // for parsing
+
 type CategoryStats struct {
 	Slug    string
 	Percent float64
@@ -118,15 +119,18 @@ func appendToKey(category string, keyStats WakatimeKeyStats) Stats {
 		Stats: categoryStats,
 	}
 }
-func extractData(r WakatimeStats) []Stats {
+func extractData(r WakatimeStats) (string, []Stats) {
+	var total string
 	var stats []Stats
 
 	for _, i := range r.Data {
+		total = i.GrandTotal.Text
+
 		stats = append(stats, appendToKey("🚀  Projects", i.Projects))
 		stats = append(stats, appendToKey("🗣️  Languages", i.Languages))
 		stats = append(stats, appendToKey("✍️  Editors", i.Editors))
 		stats = append(stats, appendToKey("💻  OS", i.OperatingSystems))
 	}
 
-	return stats
+	return total, stats
 }

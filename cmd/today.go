@@ -17,7 +17,7 @@ var todayCmd = &cobra.Command{
 	Short: "Get summary for today",
 	Run: func(cmd *cobra.Command, args []string) {
 		response := getStats("today")
-		stats := extractData(response)
+		total, stats := extractData(response)
 
 		// get info for slug padding
 		var maxStringLength int
@@ -32,6 +32,11 @@ var todayCmd = &cobra.Command{
 		}
 
 		//render output
+		//// print total
+		color.Green("⏳  Total")
+		color.HiBlue(total)
+		fmt.Println("")
+
 		for _, stat := range stats {
 			// print title
 			color.Green(stat.Title)
