@@ -25,7 +25,7 @@ Flags:
   -h, --help     help for wakatime-cli
   -t, --toggle   Help message for toggle
 
-Use "wakatime-cli [command] --help" for more information about a command.
+Use "waka [command] --help" for more information about a command.
 ```
 
 ## Sample output
