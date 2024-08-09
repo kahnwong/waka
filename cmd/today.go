@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/fatih/color"
+
 	"github.com/spf13/cobra"
 )
 
@@ -32,7 +34,7 @@ var todayCmd = &cobra.Command{
 		//render output
 		for _, stat := range stats {
 			// print title
-			fmt.Println(stat.Title)
+			color.Green(stat.Title)
 
 			for _, i := range stat.Stats {
 				// set slug padding
@@ -45,7 +47,9 @@ var todayCmd = &cobra.Command{
 				barLength := int(i.Percent) / 5 // divided by 5 to reduce rendered bar characters
 				barPadding := 20 - barLength    // deduct from 20 as it would be full bar length based on x/5 from barLength
 				bar := fmt.Sprintf("%s%s", strings.Repeat("▇", barLength), strings.Repeat("░", barPadding))
-				fmt.Printf("%s : %s %v%%\n", slug, bar, i.Percent)
+
+				blue := color.New(color.FgBlue).SprintFunc()
+				fmt.Printf("%s : %s %v%%\n", blue(slug), bar, i.Percent)
 			}
 
 			fmt.Println("")
