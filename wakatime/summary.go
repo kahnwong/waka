@@ -5,22 +5,17 @@ package wakatime
 
 import (
 	"context"
-	"encoding/base64"
-	"fmt"
 	"net/http"
-	"strings"
 	"time"
-
-	"github.com/fatih/color"
 
 	"github.com/carlmjohnson/requests"
 	"github.com/rs/zerolog/log"
-	"github.com/spf13/viper"
 )
 
-// api response
 type summaryResponse struct {
-	Data []struct {
+	Start time.Time `json:"start"`
+	End   time.Time `json:"end"`
+	Data  []struct {
 		GrandTotal struct {
 			Text string `json:"text"`
 		} `json:"grand_total"`
@@ -32,24 +27,6 @@ type summaryResponse struct {
 		OperatingSystems categoryStats `json:"operating_systems"`
 		Categories       categoryStats `json:"categories"`
 	} `json:"data"`
-	Start time.Time `json:"start"`
-	End   time.Time `json:"end"`
-}
-
-// for parsing
-type parsedCategoryStats struct {
-	Slug    string
-	Percent float64
-}
-
-type parsedStats struct {
-	Title string
-	Stats []parsedCategoryStats
-}
-
-// main
-func createAuthorizationHeader() string {
-	return fmt.Sprintf("Basic %s", base64.StdEncoding.EncodeToString([]byte(viper.GetString("WAKATIME_API_KEY"))))
 }
 
 func getSummary(period string) summaryResponse {
@@ -69,22 +46,7 @@ func getSummary(period string) summaryResponse {
 	return response
 }
 
-func appendToKey(category string, keyStats categoryStats) parsedStats {
-	var categoryStats []parsedCategoryStats
-
-	for _, i := range keyStats {
-		categoryStats = append(categoryStats, parsedCategoryStats{
-			Slug:    fmt.Sprintf("%s (%s)", i.Name, i.Text),
-			Percent: i.Percent,
-		})
-	}
-
-	return parsedStats{
-		Title: category,
-		Stats: categoryStats,
-	}
-}
-func extractData(r summaryResponse) (string, []parsedStats) {
+func extractSummaryData(r summaryResponse) (string, []parsedStats) {
 	var total string
 	var stats []parsedStats
 
@@ -100,48 +62,9 @@ func extractData(r summaryResponse) (string, []parsedStats) {
 	return total, stats
 }
 
-func Render(period string) {
+func RenderSummary(period string) {
 	response := getSummary(period)
-	total, stats := extractData(response)
+	total, stats := extractSummaryData(response)
 
-	// get info for slug padding
-	var maxStringLength int
-	for _, stat := range stats {
-		for _, i := range stat.Stats {
-			// set slug padding
-			slug := i.Slug
-			if maxStringLength < len(slug) {
-				maxStringLength = len(slug)
-			}
-		}
-	}
-
-	//render output
-	//// print total
-	color.Green(fmt.Sprintf("⏳  Total for %s", period))
-	color.HiCyan(total)
-	fmt.Println("")
-
-	for _, stat := range stats {
-		// print title
-		color.Green(stat.Title)
-
-		for _, i := range stat.Stats {
-			// set slug padding
-			slug := i.Slug
-			if len(slug) < maxStringLength {
-				slug += strings.Repeat(" ", maxStringLength-len(slug))
-			}
-
-			// draw bars
-			barLength := int(i.Percent) / 5 // divided by 5 to reduce rendered bar characters
-			barPadding := 20 - barLength    // deduct from 20 as it would be full bar length based on x/5 from barLength
-			bar := fmt.Sprintf("%s%s", strings.Repeat("▇", barLength), strings.Repeat("░", barPadding))
-
-			hiBlue := color.New(color.FgHiBlue).SprintFunc()
-			fmt.Printf("%s : %s %v%%\n", hiBlue(slug), bar, i.Percent)
-		}
-
-		fmt.Println("")
-	}
+	render(period, total, stats)
 }

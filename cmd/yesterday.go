@@ -12,7 +12,7 @@ var yesterdayCmd = &cobra.Command{
 	Use:   "yesterday",
 	Short: "Get summary for yesterday",
 	Run: func(cmd *cobra.Command, args []string) {
-		wakatime.Render("Yesterday")
+		wakatime.RenderSummary("Yesterday")
 	},
 }
 

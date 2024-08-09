@@ -4,8 +4,6 @@ Copyright © 2024 Karn Wong <karn@karnwong.me>
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/kahnwong/waka/wakatime"
 	"github.com/spf13/cobra"
 )
