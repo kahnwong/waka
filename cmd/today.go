@@ -17,23 +17,33 @@ var todayCmd = &cobra.Command{
 		response := getStats("today")
 		stats := extractData(response)
 
-		// render output
+		// get info for slug padding
+		var maxStringLength int
+		for _, stat := range stats {
+			for _, i := range stat.Stats {
+				// set slug padding
+				slug := i.Slug
+				if maxStringLength < len(slug) {
+					maxStringLength = len(slug)
+				}
+			}
+		}
+
+		//render output
 		for _, stat := range stats {
 			// print title
 			fmt.Println(stat.Title)
 
 			for _, i := range stat.Stats {
 				// set slug padding
-				var maxStringLength int
 				slug := i.Slug
 				if len(slug) < maxStringLength {
 					slug += strings.Repeat(" ", maxStringLength-len(slug))
 				}
 
 				// draw bars
-				barArea := 20
-				barLength := int(i.Percent) / barArea
-				barPadding := barArea - barLength
+				barLength := (int(i.Percent) / 10) * 2
+				barPadding := (20 - barLength)
 				bar := fmt.Sprintf("%s%s", strings.Repeat("▇", barLength), strings.Repeat("░", barPadding))
 				fmt.Printf("%s : %s %v\n", slug, bar, i.Percent)
 			}
