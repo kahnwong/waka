@@ -16,13 +16,18 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+var (
+	version = "dev"
+)
+
 type Config struct {
 	WakatimeApiKey string `yaml:"WAKATIME_API_KEY"`
 }
 
 var rootCmd = &cobra.Command{
-	Use:   "waka",
-	Short: "Display wakatime stats in your terminal",
+	Use:     "waka",
+	Version: version,
+	Short:   "Display wakatime stats in your terminal",
 	//Run: func(cmd *cobra.Command, args []string) {
 	//},
 }
