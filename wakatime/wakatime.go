@@ -156,7 +156,7 @@ func RenderStats(period string) {
 	//render output
 	//// print total
 	color.Green(fmt.Sprintf("⏳  Total for %s", period))
-	color.HiBlue(total)
+	color.HiCyan(total)
 	fmt.Println("")
 
 	for _, stat := range stats {
@@ -175,8 +175,8 @@ func RenderStats(period string) {
 			barPadding := 20 - barLength    // deduct from 20 as it would be full bar length based on x/5 from barLength
 			bar := fmt.Sprintf("%s%s", strings.Repeat("▇", barLength), strings.Repeat("░", barPadding))
 
-			blue := color.New(color.FgBlue).SprintFunc()
-			fmt.Printf("%s : %s %v%%\n", blue(slug), bar, i.Percent)
+			hiBlue := color.New(color.FgHiBlue).SprintFunc()
+			fmt.Printf("%s : %s %v%%\n", hiBlue(slug), bar, i.Percent)
 		}
 
 		fmt.Println("")
