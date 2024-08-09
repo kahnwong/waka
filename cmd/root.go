@@ -21,7 +21,7 @@ type Config struct {
 }
 
 var rootCmd = &cobra.Command{
-	Use:   "wakatime-cli",
+	Use:   "waka",
 	Short: "Display wakatime stats in your terminal",
 	//Run: func(cmd *cobra.Command, args []string) {
 	//},
