@@ -12,7 +12,7 @@ import (
 
 var todayCmd = &cobra.Command{
 	Use:   "today",
-	Short: "Get Wakatime stats for today",
+	Short: "Get summary for today",
 	Run: func(cmd *cobra.Command, args []string) {
 		response := getStats("today")
 		stats := extractData(response)

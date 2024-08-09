@@ -122,10 +122,10 @@ func extractData(r WakatimeStats) []Stats {
 	var stats []Stats
 
 	for _, i := range r.Data {
-		stats = append(stats, appendToKey("Projects", i.Projects))
-		stats = append(stats, appendToKey("Languages", i.Languages))
-		stats = append(stats, appendToKey("Editors", i.Editors))
-		stats = append(stats, appendToKey("OS", i.OperatingSystems))
+		stats = append(stats, appendToKey("🚀  Projects", i.Projects))
+		stats = append(stats, appendToKey("🗣️  Languages", i.Languages))
+		stats = append(stats, appendToKey("✍️  Editors", i.Editors))
+		stats = append(stats, appendToKey("💻  OS", i.OperatingSystems))
 	}
 
 	return stats
