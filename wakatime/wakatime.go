@@ -1,4 +1,4 @@
-package cmd
+package wakatime
 
 import (
 	"context"
@@ -15,10 +15,10 @@ import (
 	"github.com/spf13/viper"
 )
 
-var WakatimeEndpoint = "https://wakatime.com"
+var apiEndpoint = "https://wakatime.com"
 
 // api response
-type WakatimeKeyStats []struct {
+type summaryCategoryStats []struct {
 	Name         string      `json:"name"`
 	TotalSeconds float64     `json:"total_seconds"`
 	Color        interface{} `json:"color"`
@@ -30,7 +30,7 @@ type WakatimeKeyStats []struct {
 	Seconds      int         `json:"seconds"`
 	Percent      float64     `json:"percent"`
 }
-type WakatimeStats struct {
+type summary struct {
 	Data []struct {
 		GrandTotal struct {
 			Hours        int     `json:"hours"`
@@ -47,13 +47,13 @@ type WakatimeStats struct {
 			Text     string    `json:"text"`
 			Timezone string    `json:"timezone"`
 		} `json:"range"`
-		Projects         WakatimeKeyStats `json:"projects"`
-		Languages        WakatimeKeyStats `json:"languages"`
-		Dependencies     WakatimeKeyStats `json:"dependencies"`
-		Machines         WakatimeKeyStats `json:"machines"`
-		Editors          WakatimeKeyStats `json:"editors"`
-		OperatingSystems WakatimeKeyStats `json:"operating_systems"`
-		Categories       WakatimeKeyStats `json:"categories"`
+		Projects         summaryCategoryStats `json:"projects"`
+		Languages        summaryCategoryStats `json:"languages"`
+		Dependencies     summaryCategoryStats `json:"dependencies"`
+		Machines         summaryCategoryStats `json:"machines"`
+		Editors          summaryCategoryStats `json:"editors"`
+		OperatingSystems summaryCategoryStats `json:"operating_systems"`
+		Categories       summaryCategoryStats `json:"categories"`
 	} `json:"data"`
 	Start           time.Time `json:"start"`
 	End             time.Time `json:"end"`
@@ -75,25 +75,24 @@ type WakatimeStats struct {
 }
 
 // for parsing
-
-type CategoryStats struct {
+type parsedCategoryStats struct {
 	Slug    string
 	Percent float64
 }
 
-type Stats struct {
+type parsedStats struct {
 	Title string
-	Stats []CategoryStats
+	Stats []parsedCategoryStats
 }
 
 func createAuthorizationHeader() string {
 	return fmt.Sprintf("Basic %s", base64.StdEncoding.EncodeToString([]byte(viper.GetString("WAKATIME_API_KEY"))))
 }
 
-func getStats(period string) WakatimeStats {
-	var response WakatimeStats
+func getStats(period string) summary {
+	var response summary
 	err := requests.
-		URL(WakatimeEndpoint).
+		URL(apiEndpoint).
 		Method(http.MethodGet).
 		Path("api/v1/users/current/summaries").
 		Param("range", period).
@@ -107,24 +106,24 @@ func getStats(period string) WakatimeStats {
 	return response
 }
 
-func appendToKey(category string, keyStats WakatimeKeyStats) Stats {
-	var categoryStats []CategoryStats
+func appendToKey(category string, keyStats summaryCategoryStats) parsedStats {
+	var categoryStats []parsedCategoryStats
 
 	for _, i := range keyStats {
-		categoryStats = append(categoryStats, CategoryStats{
+		categoryStats = append(categoryStats, parsedCategoryStats{
 			Slug:    fmt.Sprintf("%s (%s)", i.Name, i.Text),
 			Percent: i.Percent,
 		})
 	}
 
-	return Stats{
+	return parsedStats{
 		Title: category,
 		Stats: categoryStats,
 	}
 }
-func extractData(r WakatimeStats) (string, []Stats) {
+func extractData(r summary) (string, []parsedStats) {
 	var total string
-	var stats []Stats
+	var stats []parsedStats
 
 	for _, i := range r.Data {
 		total = i.GrandTotal.Text
@@ -138,7 +137,7 @@ func extractData(r WakatimeStats) (string, []Stats) {
 	return total, stats
 }
 
-func renderStats(period string) {
+func RenderStats(period string) {
 	response := getStats(period)
 	total, stats := extractData(response)
 
