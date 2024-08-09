@@ -5,7 +5,10 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
+
+	"github.com/fatih/color"
 
 	"github.com/carlmjohnson/requests"
 	"github.com/rs/zerolog/log"
@@ -133,4 +136,50 @@ func extractData(r WakatimeStats) (string, []Stats) {
 	}
 
 	return total, stats
+}
+
+func renderStats(period string) {
+	response := getStats(period)
+	total, stats := extractData(response)
+
+	// get info for slug padding
+	var maxStringLength int
+	for _, stat := range stats {
+		for _, i := range stat.Stats {
+			// set slug padding
+			slug := i.Slug
+			if maxStringLength < len(slug) {
+				maxStringLength = len(slug)
+			}
+		}
+	}
+
+	//render output
+	//// print total
+	color.Green(fmt.Sprintf("⏳  Total for %s", period))
+	color.HiBlue(total)
+	fmt.Println("")
+
+	for _, stat := range stats {
+		// print title
+		color.Green(stat.Title)
+
+		for _, i := range stat.Stats {
+			// set slug padding
+			slug := i.Slug
+			if len(slug) < maxStringLength {
+				slug += strings.Repeat(" ", maxStringLength-len(slug))
+			}
+
+			// draw bars
+			barLength := int(i.Percent) / 5 // divided by 5 to reduce rendered bar characters
+			barPadding := 20 - barLength    // deduct from 20 as it would be full bar length based on x/5 from barLength
+			bar := fmt.Sprintf("%s%s", strings.Repeat("▇", barLength), strings.Repeat("░", barPadding))
+
+			blue := color.New(color.FgBlue).SprintFunc()
+			fmt.Printf("%s : %s %v%%\n", blue(slug), bar, i.Percent)
+		}
+
+		fmt.Println("")
+	}
 }
