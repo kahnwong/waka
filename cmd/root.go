@@ -62,13 +62,13 @@ func init() {
 		if err != nil {
 			log.Fatal().Err(err).Msg("Error obtaining home directory")
 		}
-		err = os.MkdirAll(filepath.Join(homeDir, ".config", "wakatime-cli"), os.ModePerm)
+		err = os.MkdirAll(filepath.Join(homeDir, ".config", "waka"), os.ModePerm)
 		if err != nil {
 			log.Fatal().Err(err).Msg("Error creating config path")
 		}
 
 		//// write yaml
-		filename := filepath.Join(homeDir, ".config", "wakatime-cli", "config.yaml")
+		filename := filepath.Join(homeDir, ".config", "waka", "config.yaml")
 		file, err := os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
 		if err != nil {
 			log.Fatal().Err(err).Msg("Error creating config file")
@@ -81,6 +81,13 @@ func init() {
 		if err != nil {
 			log.Fatal().Err(err).Msg("Error writing config")
 		}
+
+		// read config to viper
+		err = viper.ReadInConfig()
+		if err != nil {
+			log.Fatal().Err(err).Msg("Error reading config after config initialization")
+		}
+
 	}
 
 	// rootCmd
