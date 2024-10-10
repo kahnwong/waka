@@ -1,6 +1,6 @@
 module github.com/kahnwong/waka
 
-go 1.22.5
+go 1.23.2
 
 require (
 	github.com/carlmjohnson/requests v0.24.2
