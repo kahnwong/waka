@@ -3,7 +3,7 @@ module github.com/kahnwong/waka
 go 1.23.2
 
 require (
-	github.com/carlmjohnson/requests v0.24.2
+	github.com/carlmjohnson/requests v0.24.3
 	github.com/fatih/color v1.18.0
 	github.com/rs/zerolog v1.33.0
 	github.com/spf13/cobra v1.8.1
