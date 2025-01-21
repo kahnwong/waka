@@ -37,7 +37,7 @@ func getStats(period string) statsResponse {
 		ToJSON(&response).
 		Fetch(context.Background())
 	if err != nil {
-		log.Fatal().Err(err).Msgf("Failed to get stats for %s", period)
+		log.Fatal().Msgf("Failed to get stats for %s", period)
 	}
 
 	return response

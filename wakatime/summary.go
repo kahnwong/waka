@@ -40,7 +40,7 @@ func getSummary(period string) summaryResponse {
 		ToJSON(&response).
 		Fetch(context.Background())
 	if err != nil {
-		log.Fatal().Err(err).Msgf("Failed to get summary for %s", period)
+		log.Fatal().Msgf("Failed to get summary for %s", period)
 	}
 
 	return response
