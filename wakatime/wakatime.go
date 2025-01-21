@@ -9,10 +9,19 @@ import (
 	"strings"
 
 	"github.com/fatih/color"
-	"github.com/spf13/viper"
+	cliBase "github.com/kahnwong/cli-base"
+	"github.com/rs/zerolog/log"
 )
 
+// config
 var apiEndpoint = "https://wakatime.com"
+
+type Config struct {
+	WakatimeApiKey string `yaml:"WAKATIME_API_KEY"`
+}
+
+var configPath = "~/.config/waka/config.yaml"
+var config = cliBase.ReadYaml[Config](configPath)
 
 // api response
 type categoryStats []struct {
@@ -33,7 +42,7 @@ type parsedStats struct {
 }
 
 func createAuthorizationHeader() string {
-	return fmt.Sprintf("Basic %s", base64.StdEncoding.EncodeToString([]byte(viper.GetString("WAKATIME_API_KEY"))))
+	return fmt.Sprintf("Basic %s", base64.StdEncoding.EncodeToString([]byte(config.WakatimeApiKey)))
 }
 
 func appendToKey(category string, keyStats categoryStats) parsedStats {
@@ -100,5 +109,14 @@ func render(period string, total string, stats []parsedStats) {
 		}
 
 		fmt.Println("")
+	}
+}
+
+func init() {
+	// init config if does not exists
+	path, err := cliBase.CheckIfConfigExists(configPath)
+	if err != nil {
+		cliBase.CreateConfigIfNotExists(path)
+		log.Info().Msg("Successfully initialized config")
 	}
 }

@@ -9,20 +9,15 @@ import (
 	"os"
 	"strings"
 
-	cliBase "github.com/kahnwong/cli-base"
+	"github.com/kahnwong/waka/wakatime"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"gopkg.in/yaml.v3"
 )
 
 var (
 	version = "dev"
 )
-
-type Config struct {
-	WakatimeApiKey string `yaml:"WAKATIME_API_KEY"`
-}
 
 var rootCmd = &cobra.Command{
 	Use:     "waka",
@@ -55,7 +50,7 @@ func InitConfigIfNotExists(path string) {
 	defer file.Close()
 
 	enc := yaml.NewEncoder(file)
-	err = enc.Encode(Config{WakatimeApiKey: strings.TrimSpace(apiKey)})
+	err = enc.Encode(wakatime.Config{WakatimeApiKey: strings.TrimSpace(apiKey)})
 
 	if err != nil {
 		log.Fatal().Msg("Error writing config")
@@ -63,18 +58,5 @@ func InitConfigIfNotExists(path string) {
 }
 
 func init() {
-	// init config if does not exists
-	path := "~/.config/waka/config.yaml"
-	path, err := cliBase.CheckIfConfigExists(path)
-	if err != nil {
-		InitConfigIfNotExists(path)
-		log.Info().Msg("Successfully initialized config")
-	}
-
-	// read config
-	config := cliBase.ReadYaml[Config](path)
-	viper.SetDefault("WAKATIME_API_KEY", config.WakatimeApiKey)
-
-	// rootCmd
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
