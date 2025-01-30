@@ -5,7 +5,7 @@ go 1.23.5
 require (
 	github.com/carlmjohnson/requests v0.24.3
 	github.com/fatih/color v1.18.0
-	github.com/kahnwong/cli-base v0.0.0-20250121060804-3c9e867df1e8
+	github.com/kahnwong/cli-base v0.0.0-20250121091831-4eeecf72423f
 	github.com/rs/zerolog v1.33.0
 	github.com/spf13/cobra v1.8.1
 	gopkg.in/yaml.v3 v3.0.1
