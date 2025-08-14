@@ -214,6 +214,8 @@ github.com/kahnwong/cli-base v0.0.0-20250405072452-a8ebd5c661fd h1:fI00LU0YtpaNq
 github.com/kahnwong/cli-base v0.0.0-20250405072452-a8ebd5c661fd/go.mod h1:rTKSqPvW1uRDcdWHTXOYNZUM/IJiV6rNrecy1r13N10=
 github.com/kahnwong/cli-base v0.0.0-20250806100710-60d4c6902dd9 h1:YdtSGADMLzK50ETxhE1XJGc74rywSjTH+1/juL804TQ=
 github.com/kahnwong/cli-base v0.0.0-20250806100710-60d4c6902dd9/go.mod h1:rDVsfweQ4kaxpAu+IZtZycFBUAfJX/72cEXpEoRyrVM=
+github.com/kahnwong/cli-base v0.0.0-20250814120046-dde1e03ae9dd h1:uoMoWqIxD3BYoqduev1mZFCxSKNsRQhv870St5/vA08=
+github.com/kahnwong/cli-base v0.0.0-20250814120046-dde1e03ae9dd/go.mod h1:rDVsfweQ4kaxpAu+IZtZycFBUAfJX/72cEXpEoRyrVM=
 github.com/keybase/go-keychain v0.0.0-20231219164618-57a3676c3af6 h1:IsMZxCuZqKuao2vNdfD82fjjgPLfyHLpR41Z88viRWs=
 github.com/keybase/go-keychain v0.0.0-20231219164618-57a3676c3af6/go.mod h1:3VeWNIJaW+O5xpRQbPp0Ybqu1vJd/pm7s2F473HRrkw=
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
