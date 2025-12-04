@@ -7,7 +7,7 @@ require (
 	github.com/fatih/color v1.18.0
 	github.com/kahnwong/cli-base v0.0.0-20250814120046-dde1e03ae9dd
 	github.com/rs/zerolog v1.34.0
-	github.com/spf13/cobra v1.10.1
+	github.com/spf13/cobra v1.10.2
 	gopkg.in/yaml.v3 v3.0.1
 )
 
