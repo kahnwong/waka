@@ -1,48 +1,15 @@
-/*
-Copyright © 2024 Karn Wong <karn@karnwong.me>
-*/
 package wakatime
 
 import (
-	"encoding/base64"
 	"fmt"
 	"strings"
 
 	"github.com/fatih/color"
-	cliBase "github.com/kahnwong/cli-base"
-	"github.com/rs/zerolog/log"
 )
 
-// config
-var apiEndpoint = "https://wakatime.com"
-
-type Config struct {
-	WakatimeApiKey string `yaml:"WAKATIME_API_KEY"`
-}
-
-var configPath = "~/.config/waka/config.yaml"
-var config = cliBase.ReadYaml[Config](configPath)
-
-// api response
-type categoryStats []struct {
-	Name    string  `json:"name"`
-	Text    string  `json:"text"`
-	Percent float64 `json:"percent"`
-}
-
-// parsed structs
 type parsedCategoryStats struct {
 	Slug    string
 	Percent float64
-}
-
-type parsedStats struct {
-	Title string
-	Stats []parsedCategoryStats
-}
-
-func createAuthorizationHeader() string {
-	return fmt.Sprintf("Basic %s", base64.StdEncoding.EncodeToString([]byte(config.WakatimeApiKey)))
 }
 
 func appendToKey(category string, keyStats categoryStats) parsedStats {
@@ -109,14 +76,5 @@ func render(period string, total string, stats []parsedStats) {
 		}
 
 		fmt.Println("")
-	}
-}
-
-func init() {
-	// init config if does not exists
-	path, err := cliBase.CheckIfConfigExists(configPath)
-	if err != nil {
-		cliBase.CreateConfigIfNotExists(path)
-		log.Info().Msg("Successfully initialized config")
 	}
 }
