@@ -1,14 +1,19 @@
 package wakatime
 
-import "github.com/rs/zerolog/log"
+import "fmt"
 
-func RenderSummary(period string) {
+func RenderSummary(period string) error {
+	if err := ensureInitialized(); err != nil {
+		return fmt.Errorf("failed to initialize: %w", err)
+	}
+
 	response, err := wakatimeClient.getSummary(period)
 	if err != nil {
-		log.Fatal().Err(err).Msgf("Failed to get summary for %s", period)
+		return fmt.Errorf("failed to get summary for %s: %w", period, err)
 	}
 	total, stats := extractSummaryData(response)
 	render(period, total, stats)
+	return nil
 }
 
 func extractSummaryData(r summaryResponse) (string, []parsedStats) {

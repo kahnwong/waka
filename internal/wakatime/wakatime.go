@@ -8,15 +8,17 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/carlmjohnson/requests"
 	cliBase "github.com/kahnwong/cli-base"
-	"github.com/rs/zerolog/log"
 )
 
 var configPath = "~/.config/waka/config.yaml"
 var wakatimeClient *Client
+var initOnce sync.Once
+var initErr error
 
 type Client struct {
 	baseURL             string
@@ -115,16 +117,31 @@ func (c *Client) getSummary(period string) (summaryResponse, error) {
 	return response, nil
 }
 
-func init() {
+func initialize() error {
 	path, err := cliBase.CheckIfConfigExists(configPath)
 	if err != nil {
-		cliBase.CreateConfigIfNotExists(path)
-		log.Info().Msg("Successfully initialized config")
+		err = cliBase.CreateConfigIfNotExists(path)
+		if err != nil {
+			return err
+		}
 	}
 
-	config := cliBase.ReadYaml[Config](configPath)
+	config, err := cliBase.ReadYaml[Config](configPath)
+	if err != nil {
+		return fmt.Errorf("failed to read config: %w", err)
+	}
+
 	wakatimeClient, err = NewClient(config.WakatimeApiKey)
 	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to create wakatimeClient")
+		return fmt.Errorf("failed to create wakatime client: %w", err)
 	}
+
+	return nil
+}
+
+func ensureInitialized() error {
+	initOnce.Do(func() {
+		initErr = initialize()
+	})
+	return initErr
 }

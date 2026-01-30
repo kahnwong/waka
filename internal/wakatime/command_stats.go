@@ -1,7 +1,7 @@
 package wakatime
 
 import (
-	"github.com/rs/zerolog/log"
+	"fmt"
 )
 
 type parsedStats struct {
@@ -9,13 +9,18 @@ type parsedStats struct {
 	Stats []parsedCategoryStats
 }
 
-func RenderStats(period string) {
+func RenderStats(period string) error {
+	if err := ensureInitialized(); err != nil {
+		return fmt.Errorf("failed to initialize: %w", err)
+	}
+
 	response, err := wakatimeClient.getStats(period)
 	if err != nil {
-		log.Fatal().Err(err).Msgf("Failed to get stats for %s", period)
+		return fmt.Errorf("failed to get stats for %s: %w", period, err)
 	}
 	total, stats := extractStatsData(response)
 	render(period, total, stats)
+	return nil
 }
 
 func extractStatsData(r statsResponse) (string, []parsedStats) {
