@@ -4,8 +4,11 @@ Copyright © 2024 Karn Wong <karn@karnwong.me>
 package cmd
 
 import (
+	"log/slog"
 	"os"
 
+	"github.com/rs/zerolog"
+	slogzerolog "github.com/samber/slog-zerolog"
 	"github.com/spf13/cobra"
 )
 
@@ -27,5 +30,9 @@ func Execute() {
 }
 
 func init() {
+	output := zerolog.ConsoleWriter{Out: os.Stderr}
+	logger := zerolog.New(output).With().Timestamp().Logger()
+	slog.SetDefault(slog.New(slogzerolog.Option{Logger: &logger}.NewZerologHandler()))
+
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
