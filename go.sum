@@ -14,6 +14,8 @@ github.com/kahnwong/cli-base v0.0.0-20260130142944-47fb95a69ad9 h1:o/I6juFivYF8M
 github.com/kahnwong/cli-base v0.0.0-20260130142944-47fb95a69ad9/go.mod h1:rDVsfweQ4kaxpAu+IZtZycFBUAfJX/72cEXpEoRyrVM=
 github.com/kahnwong/cli-base v0.0.0-20260130183058-8a3218b043b2 h1:ZP6VbwrTTe8NirQokMBogL2DdYm7Hhs/g/YwEizrmEE=
 github.com/kahnwong/cli-base v0.0.0-20260130183058-8a3218b043b2/go.mod h1:rDVsfweQ4kaxpAu+IZtZycFBUAfJX/72cEXpEoRyrVM=
+github.com/kahnwong/cli-base v0.0.0-20260430061757-292811e13a6d h1:9d5Ly+6C8wnQcZsoVdp3lNo45LzN2GU0l+R1vp5T+ZU=
+github.com/kahnwong/cli-base v0.0.0-20260430061757-292811e13a6d/go.mod h1:PgUdu5DRSgJAlg49wYmxtDGYCRhegJzGiFaK2AY9fLo=
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
 github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
 github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
