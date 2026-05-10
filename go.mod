@@ -1,11 +1,11 @@
 module github.com/kahnwong/waka
 
-go 1.25.0
+go 1.26.3
 
 require (
 	github.com/carlmjohnson/requests v0.25.1
 	github.com/fatih/color v1.19.0
-	github.com/kahnwong/cli-base v0.0.0-20260430124253-310ea2400611
+	github.com/kahnwong/cli-base v0.0.0-20260510152936-ab38323ee188
 	github.com/rs/zerolog v1.35.1
 	github.com/samber/slog-zerolog v1.0.0
 	github.com/spf13/cobra v1.10.2
