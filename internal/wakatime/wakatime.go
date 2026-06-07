@@ -8,18 +8,13 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net/http"
-	"strings"
 	"sync"
 	"time"
 
 	"github.com/carlmjohnson/requests"
 	cliBase "github.com/kahnwong/cli-base"
-	"gopkg.in/ini.v1"
 )
 
-const defaultAPIURL = "https://wakatime.com/api"
-
-var configPath = "~/.wakatime.cfg"
 var wakatimeClient *Client
 var initOnce sync.Once
 var initErr error
@@ -28,11 +23,6 @@ type Client struct {
 	baseURL             string
 	client              *http.Client
 	authorizationHeader string
-}
-
-type Config struct {
-	APIURL string
-	APIKey string
 }
 
 type categoryStats []struct {
@@ -77,14 +67,12 @@ func NewClient(apiKey string, apiURL string) (*Client, error) {
 	if apiKey == "" {
 		return nil, fmt.Errorf("API key cannot be empty")
 	}
-
-	baseURL := defaultAPIURL
-	if apiURL != "" {
-		baseURL = apiURL
+	if apiURL == "" {
+		apiURL = defaultAPIURL
 	}
 
 	c := &Client{
-		baseURL:             normalizeAPIURL(baseURL),
+		baseURL:             normalizeAPIURL(apiURL),
 		client:              &http.Client{},
 		authorizationHeader: fmt.Sprintf("Basic %s", base64.StdEncoding.EncodeToString([]byte(apiKey))),
 	}
@@ -127,17 +115,6 @@ func (c *Client) getSummary(period string) (summaryResponse, error) {
 	return response, nil
 }
 
-func normalizeAPIURL(apiURL string) string {
-	apiURL = strings.TrimRight(apiURL, "/")
-	if strings.Contains(apiURL, "wakapi") && !strings.HasSuffix(apiURL, "/compat/wakatime/v1") {
-		return apiURL + "/compat/wakatime/v1/"
-	}
-	if !strings.HasSuffix(apiURL, "/v1") {
-		return apiURL + "/v1/"
-	}
-	return apiURL + "/"
-}
-
 func initialize() error {
 	path, err := cliBase.ExpandHome(configPath)
 	if err != nil {
@@ -155,24 +132,6 @@ func initialize() error {
 	}
 
 	return nil
-}
-
-func readConfig(path string) (Config, error) {
-	cfg, err := ini.Load(path)
-	if err != nil {
-		return Config{}, err
-	}
-
-	settings := cfg.Section("settings")
-	apiURL := settings.Key("api_url").String()
-	if apiURL == "" {
-		apiURL = defaultAPIURL
-	}
-
-	return Config{
-		APIURL: apiURL,
-		APIKey: settings.Key("api_key").String(),
-	}, nil
 }
 
 func ensureInitialized() error {
