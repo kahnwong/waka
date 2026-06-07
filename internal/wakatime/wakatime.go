@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 Karn Wong <karn@karnwong.me>
+Copyright © 2026 Karn Wong <karn@karnwong.me>
 */
 package wakatime
 
@@ -8,14 +8,18 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 
 	"github.com/carlmjohnson/requests"
 	cliBase "github.com/kahnwong/cli-base"
+	"gopkg.in/ini.v1"
 )
 
-var configPath = "~/.config/waka/config.yaml"
+const defaultAPIURL = "https://wakatime.com/api"
+
+var configPath = "~/.wakatime.cfg"
 var wakatimeClient *Client
 var initOnce sync.Once
 var initErr error
@@ -27,7 +31,8 @@ type Client struct {
 }
 
 type Config struct {
-	WakatimeApiKey string `yaml:"WAKATIME_API_KEY"`
+	APIURL string
+	APIKey string
 }
 
 type categoryStats []struct {
@@ -68,13 +73,18 @@ type summaryResponse struct {
 	} `json:"data"`
 }
 
-func NewClient(apiKey string) (*Client, error) {
+func NewClient(apiKey string, apiURL string) (*Client, error) {
 	if apiKey == "" {
 		return nil, fmt.Errorf("API key cannot be empty")
 	}
 
+	baseURL := defaultAPIURL
+	if apiURL != "" {
+		baseURL = apiURL
+	}
+
 	c := &Client{
-		baseURL:             "https://wakatime.com",
+		baseURL:             normalizeAPIURL(baseURL),
 		client:              &http.Client{},
 		authorizationHeader: fmt.Sprintf("Basic %s", base64.StdEncoding.EncodeToString([]byte(apiKey))),
 	}
@@ -87,7 +97,7 @@ func (c *Client) getStats(period string) (statsResponse, error) {
 	err := requests.
 		URL(c.baseURL).
 		Method(http.MethodGet).
-		Pathf("api/v1/users/current/stats/%s", period).
+		Pathf("users/current/stats/%s", period).
 		Header("Authorization", c.authorizationHeader).
 		Client(c.client).
 		ToJSON(&response).
@@ -104,7 +114,7 @@ func (c *Client) getSummary(period string) (summaryResponse, error) {
 	err := requests.
 		URL(c.baseURL).
 		Method(http.MethodGet).
-		Path("api/v1/users/current/summaries").
+		Path("users/current/summaries").
 		Param("range", period).
 		Header("Authorization", c.authorizationHeader).
 		Client(c.client).
@@ -117,26 +127,52 @@ func (c *Client) getSummary(period string) (summaryResponse, error) {
 	return response, nil
 }
 
+func normalizeAPIURL(apiURL string) string {
+	apiURL = strings.TrimRight(apiURL, "/")
+	if strings.Contains(apiURL, "wakapi") && !strings.HasSuffix(apiURL, "/compat/wakatime/v1") {
+		return apiURL + "/compat/wakatime/v1/"
+	}
+	if !strings.HasSuffix(apiURL, "/v1") {
+		return apiURL + "/v1/"
+	}
+	return apiURL + "/"
+}
+
 func initialize() error {
-	path, err := cliBase.CheckIfConfigExists(configPath)
+	path, err := cliBase.ExpandHome(configPath)
 	if err != nil {
-		err = cliBase.CreateConfigIfNotExists(path)
-		if err != nil {
-			return err
-		}
+		return fmt.Errorf("failed to expand config path: %w", err)
 	}
 
-	config, err := cliBase.ReadYaml[Config](configPath)
+	config, err := readConfig(path)
 	if err != nil {
 		return fmt.Errorf("failed to read config: %w", err)
 	}
 
-	wakatimeClient, err = NewClient(config.WakatimeApiKey)
+	wakatimeClient, err = NewClient(config.APIKey, config.APIURL)
 	if err != nil {
 		return fmt.Errorf("failed to create wakatime client: %w", err)
 	}
 
 	return nil
+}
+
+func readConfig(path string) (Config, error) {
+	cfg, err := ini.Load(path)
+	if err != nil {
+		return Config{}, err
+	}
+
+	settings := cfg.Section("settings")
+	apiURL := settings.Key("api_url").String()
+	if apiURL == "" {
+		apiURL = defaultAPIURL
+	}
+
+	return Config{
+		APIURL: apiURL,
+		APIKey: settings.Key("api_key").String(),
+	}, nil
 }
 
 func ensureInitialized() error {
