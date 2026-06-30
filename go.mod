@@ -5,7 +5,7 @@ go 1.26.4
 require (
 	github.com/carlmjohnson/requests v0.25.1
 	github.com/fatih/color v1.19.0
-	github.com/kahnwong/cli-base v0.0.0-20260512102925-06fe226bcb0d
+	github.com/kahnwong/cli-base v0.0.0-20260630163537-c7bc0284984a
 	github.com/rs/zerolog v1.35.1
 	github.com/samber/slog-zerolog/v2 v2.9.2
 	github.com/spf13/cobra v1.10.2
