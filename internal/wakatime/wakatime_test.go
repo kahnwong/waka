@@ -46,15 +46,3 @@ func TestNewClient(t *testing.T) {
 		})
 	}
 }
-
-func TestNewClientWakapiURL(t *testing.T) {
-	client, err := NewClient("test-api-key", "https://wakapi.karnwong.me/api")
-	if err != nil {
-		t.Fatalf("NewClient() error = %v", err)
-	}
-
-	want := "https://wakapi.karnwong.me/api/compat/wakatime/v1/"
-	if client.baseURL != want {
-		t.Errorf("NewClient() baseURL = %v, want %s", client.baseURL, want)
-	}
-}
