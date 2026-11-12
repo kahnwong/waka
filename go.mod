@@ -3,13 +3,13 @@ module github.com/kahnwong/waka
 go 1.27.2
 
 require (
-	github.com/carlmjohnson/requests v0.26.2
+	github.com/carlmjohnson/requests v0.26.3
 	github.com/fatih/color v1.19.0
 	github.com/kahnwong/cli-base v0.0.0-20260630163537-c7bc0284984a
 	github.com/rs/zerolog v1.35.1
 	github.com/samber/slog-zerolog/v2 v2.9.2
 	github.com/spf13/cobra v1.10.2
-	gopkg.in/ini.v1 v1.67.3
+	gopkg.in/ini.v1 v1.68.0
 )
 
 require (
@@ -20,8 +20,8 @@ require (
 	github.com/samber/lo v1.53.0 // indirect
 	github.com/samber/slog-common v0.21.0 // indirect
 	github.com/spf13/pflag v1.0.9 // indirect
-	golang.org/x/net v0.58.0 // indirect
-	golang.org/x/sys v0.47.0 // indirect
-	golang.org/x/text v0.41.0 // indirect
+	golang.org/x/net v0.62.0 // indirect
+	golang.org/x/sys v0.49.0 // indirect
+	golang.org/x/text v0.43.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
